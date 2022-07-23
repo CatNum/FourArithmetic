@@ -1,0 +1,11 @@
+@startuml
+namespace main {
+    class fourArithmetic << (S,Aquamarine) >> {
+        - arithmetic []<font color=blue>interface</font>{}
+        - len int
+
+    }
+}
+
+
+@enduml

@@ -11,14 +11,15 @@ import (
 )
 
 // 表示四则算式中的数字个数
+// 2,3,4的比例不同是考虑到 2 3年级的学生算数能力
 var levelTwo = []int{2, 2, 2, 2, 3, 3, 3, 4}
 var levelThree = []int{2, 3, 3, 3, 4, 4, 4, 4, 4, 4}
 
-// 用来判断算式唯一性并存储算式
+// 用来判断算式唯一性并存储算式结果
 var secondGradeFourArithmeticMap = make(map[string]int, 0)
 var thirdGradefourArithmeticMap = make(map[string]int, 0)
 
-// 存储三年级四则运算算式
+// 存储三年级四则运算算式便于按顺序输出
 var secondGradeFourArithmeticSlice = make([]string, 0)
 var thirdGradefourArithmeticSlice = make([]string, 0)
 
@@ -28,6 +29,8 @@ type fourArithmetic struct {
 }
 
 // level 表示符号的优先级
+// 0表示 “(” 优先级最低
+// 遇到 “)” 需要一直判断直到遇到 “(” 所以不设置优先级也可以
 var level = map[string]int{
 	"(": 0,
 	"+": 1,
@@ -37,12 +40,14 @@ var level = map[string]int{
 }
 
 func main() {
+	// 生成算式
 	for len(secondGradeFourArithmeticMap) <= 1000 {
 		secondGrade()
 	}
 	for len(thirdGradefourArithmeticMap) <= 1000 {
 		thirdGrade()
 	}
+	// 输出算式
 	//1.创建一个新文件，写入内容 hello,Gardon
 	//1.打开文件 d:/adc.txt
 	secondGradefilePath := "C:/Users/xl/Desktop/SecondGrade.txt"
@@ -105,7 +110,7 @@ func main() {
 	thirdAnswerWriter.Flush()
 }
 
-// 二年级式子，只有 + -
+// 生成二年级算式并存储，只有 + -
 func secondGrade() (s []interface{}) {
 	midds := []string{"+", "-"}
 	count := levelTwo[rand.Intn(len(levelTwo))] // 表示算式中数字的个数
@@ -128,12 +133,11 @@ func secondGrade() (s []interface{}) {
 	return
 }
 
-// 生成符合规则的四则运算算式 并加入到全局 map 中
+// 生成符合规则的三年级四则运算算式并存储
 // 1. 保证算式中间结果都是正整数
 // 2. 保证算式中的 （） 都是有效果的
 // 3. 保证算式的唯一性
 // 三年级式子，有 + - * / （）
-// 加（），原式加上（）结果不相同则表示括号有用，根据这个特性来判断括号加的是否有必要
 // （）外侧符号为 * / 且内侧相邻符号为 + -的情况（）才能生效
 func thirdGrade() {
 	midds := []string{"+", "-", "×", "÷"}
@@ -149,6 +153,7 @@ func thirdGrade() {
 		}
 	}
 	// 根据原始算式得到该算式加括号的所有情况
+	// 如果长度为 3 表示为 a+b 形式 不需要加小括号，直接存储
 	if len(s) == 3 {
 		//fmt.Println(s)
 		resultNum, err := convert(s)
@@ -168,7 +173,7 @@ func thirdGrade() {
 	return
 }
 
-// 利用 原始四则算式 得出所有的 加小括号的四则算式
+// 利用 原始四则算式 得出所有的 加小括号的四则算式并存储
 func fourArithmeticSet(s []interface{}) {
 	//before := len(fourArithmeticMap)
 	//fmt.Println("原始：",s)
@@ -229,7 +234,7 @@ func fourArithmeticSet(s []interface{}) {
 	//}
 }
 
-// 通过后缀表达式计算四则表达式
+// 通过后缀表达式计算四则表达式的出算式结果
 // 检查中间计算过程是否是 正整数 主要是 除法 和 减法
 func result(s []interface{}) (resultNum int, err error) {
 	middResults := make([]int, 0)
@@ -412,7 +417,7 @@ func arithmeticCheck(s []interface{}) (isOk bool) {
 	return isOk
 }
 
-// convertString 将式子转换为 string 形式
+// convertString 将式子转换为 string 形式；便于存入 map
 func convertString(s []interface{}, resultNum int) string {
 	var value string
 	for _, i2 := range s {
