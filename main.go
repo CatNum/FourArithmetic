@@ -39,6 +39,11 @@ var level = map[string]int{
 	"÷": 2,
 }
 
+//func main(){
+//	resultNum,err := convert([]interface{}{2,"-",84,"×",47})
+//	fmt.Println(resultNum,":",err)
+//}
+
 func main() {
 	// 生成算式
 	for len(secondGradeFourArithmeticMap) <= 1000 {
@@ -354,9 +359,15 @@ func convert(s []interface{}) (resultNum int, err error) {
 			}
 		}
 	}
-	for _, value := range midd {
-		postfixExpression = append(postfixExpression, value)
+	// 如果符号栈里边，还有符号，则由栈顶开始放到后缀表达式中
+	if len(midd) > 0 {
+		for i := 0; i < len(midd); i++ {
+			postfixExpression = append(postfixExpression, midd[len(midd)-i-1])
+		}
 	}
+	//for _, value := range midd {
+	//	postfixExpression = append(postfixExpression, value)
+	//}
 	resultNum, err = result(postfixExpression)
 	return resultNum, err
 }
